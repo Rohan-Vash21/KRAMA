@@ -14,7 +14,8 @@ A four tier multi-agent, model agnostic, and resource efficient architecture whi
 **MEGA-RAG Custom Database:** https://drive.google.com/drive/folders/12dzRJ6Ss9GB8cw2UYKG5XTSweqn26NVT?usp=sharing
 
 <img width="453" height="171" alt="image" src="https://github.com/user-attachments/assets/0345b0ef-35e4-41db-bea0-8d135e837004" />
-<br>
+
+<br />
 Language Codes to put for source and/or translation:-
 
 **- Malyalam (ml):** mal_Mlym
