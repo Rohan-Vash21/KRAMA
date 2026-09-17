@@ -1,0 +1,46 @@
+import pandas as pd
+
+LANGUAGE = "Choose your desired language"
+VALIDATION_PATHS = {
+    "Llama-3.2-1B-Instruct": f"Final_output_validation_Llama1Bit_file_path",
+    "Sarvam-1": f"Final_output_validation_Sarvam_file_path",
+    "Gemma-2-2b-it": f"Final_output_validation_Gemma2Bit_file_path",
+    "Llama-3.2-3B-Instruct": f"Final_output_validation_Llama3Bit_file_path",
+    "Aya-23-8B": f"Final_output_validation_Aya8B_file_path",
+    "Llama-3.1-8B-Instruct": f"Final_output_validation_Llama8Bit_file_path"
+}
+
+def run_val_diagnostics():
+    print(f"--- VALIDATION SPLIT DIAGNOSTICS: {LANGUAGE.upper()} ---")
+    results = []
+
+    for model_name, path in VALIDATION_PATHS.items():
+        try:
+            val_df = pd.read_csv(path)
+            total_val = len(val_df)
+
+            if 'rag_score' in val_df.columns and 'critic_confidence' in val_df.columns:
+                rag_hits = len(val_df[val_df['rag_score'] >= 0.85])
+                critic_confident = len(val_df[val_df['critic_confidence'] >= 0.60])
+                actual_overturns_val = len(val_df[val_df['ensemble_pred'] != val_df['final_answer']])
+
+                results.append({
+                    "Model": model_name,
+                    "Total": total_val,
+                    "RAG Hits (>=0.85)": f"{rag_hits} ({round((rag_hits/total_val)*100, 2)}%)",
+                    "Critic Conf (>=0.60)": f"{critic_confident} ({round((critic_confident/total_val)*100, 2)}%)",
+                    "Overturns": f"{actual_overturns_val} ({round((actual_overturns_val/total_val)*100, 2)}%)"
+                })
+            else:
+                print(f"[{model_name}] Columns 'rag_score' or 'critic_confidence' missing in CSV.")
+
+        except FileNotFoundError:
+            print(f"[{model_name}] File not found at {path}. Please verify the path.")
+
+    if results:
+        print("\n=========================================================================")
+        report_df = pd.DataFrame(results)
+        print(report_df.to_string(index=False))
+        print("=========================================================================")
+
+run_val_diagnostics()
